@@ -1,3 +1,11 @@
+# GOAP NPC Plugin DEMO — Fork Notice
+
+This is a fork of [narratech/GOAP_NPC_Demo](https://github.com/narratech/GOAP_NPC_Demo), used as the evaluation/test harness for my Master's thesis on improving the GOAP_NPC plugin under the Master's in Visual Informatics program at Faculty of Informatics, Masaryk University. Ported to run on Unreal Engine 5.7. The original README below is preserved unmodified for reference and attribution.
+
+Seifeldin Elkasrawy ~ Student at MUNI
+
+---
+
 # GOAP NPC Plugin DEMO
 
 Hi there!
