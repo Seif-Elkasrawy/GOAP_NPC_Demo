@@ -10,5 +10,6 @@ public class TFGTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.Add("TFG");
+		bOverrideBuildEnvironment = true;
 	}
 }

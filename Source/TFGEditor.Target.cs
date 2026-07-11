@@ -10,5 +10,6 @@ public class TFGEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.Add("TFG");
+		bOverrideBuildEnvironment = true;
 	}
 }

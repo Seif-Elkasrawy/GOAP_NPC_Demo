@@ -1,7 +1,6 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "TFGCharacter.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -79,7 +78,7 @@ void ATFGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 void ATFGCharacter::OnResetVR()
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	// empty
 }
 
 void ATFGCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
