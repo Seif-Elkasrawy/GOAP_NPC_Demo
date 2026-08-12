@@ -1,8 +1,8 @@
 /**
 	GOAP NPC: Goal-Oriented Action Planning for Non-Player Characters
-	Copyright © 2022 Narratech Laboratories
+	Copyright ï¿½ 2022 Narratech Laboratories
 
-	Authors: Diego Romero-Hombrebueno Santos, Mario Sánchez Blanco, José Manuel Sierra Ramos, Daniel Gil Aguilar and Federico Peinado
+	Authors: Diego Romero-Hombrebueno Santos, Mario Sï¿½nchez Blanco, Josï¿½ Manuel Sierra Ramos, Daniel Gil Aguilar and Federico Peinado
 	Website: https://narratech.com/project/goap-npc/
  */
 #pragma once
@@ -46,6 +46,8 @@ public:
 	// Get the node with lowest F's value. 
 	// F = G (real cost at this state) + H (estimated cost from this state).
 	GOAPNode lowestFinList(const TArray<GOAPNode>& opList);
+
+	int getIndexInOpenList(GOAPNode node, const TArray<GOAPNode>& list);
 
 	// Returns the nodes adjacent to the current one.
 	TArray<GOAPNode> getAdjacent(GOAPNode current, const TArray<UGOAPAction*>& vActions, APawn* p);
