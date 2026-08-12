@@ -1,8 +1,8 @@
 /**
 	GOAP NPC: Goal-Oriented Action Planning for Non-Player Characters
-	Copyright © 2022 Narratech Laboratories
+	Copyright ï¿½ 2022 Narratech Laboratories
 
-	Authors: Diego Romero-Hombrebueno Santos, Mario Sánchez Blanco, José Manuel Sierra Ramos, Daniel Gil Aguilar and Federico Peinado
+	Authors: Diego Romero-Hombrebueno Santos, Mario Sï¿½nchez Blanco, Josï¿½ Manuel Sierra Ramos, Daniel Gil Aguilar and Federico Peinado
 	Website: https://narratech.com/project/goap-npc/
  */
 #include "GOAPNode.h"
@@ -24,13 +24,13 @@ GOAPNode::GOAPNode(UGOAPAction* a)
 
 bool GOAPNode::operator==(GOAPNode n)
 {
-	return action == n.getAction();
+	return action == n.getAction() && subgoalState == (n.getSubgoalState());
 }
 
 
-GOAPWorldState GOAPNode::getWorld()
+SubgoalState GOAPNode::getSubgoalState()
 {
-	return world;
+	return subgoalState;
 }
 
 int GOAPNode::getH()
@@ -58,9 +58,9 @@ UGOAPAction* GOAPNode::getAction()
 	return action;
 }
 
-void GOAPNode::setWorld(GOAPWorldState w)
+void GOAPNode::setSubgoalState(SubgoalState s)
 {
-	this->world = w;
+	this->subgoalState = s;
 }
 
 void GOAPNode::setH(int value)
@@ -68,17 +68,16 @@ void GOAPNode::setH(int value)
 	this->h = value;
 }
 
-void GOAPNode::setH(GOAPWorldState w)
+void GOAPNode::setH(GOAPWorldState realWorld)
 {
-	for (auto it : world.getAtoms())
+	int mismatches = 0;
+	for (auto requirement : subgoalState.getAtoms())
 	{
-		auto aux = w.getAtoms().find(it.first);
-		if (aux != w.getAtoms().end())
-		{
-			if (it.second != aux->second) ++h;
-		}
-		else ++h;
+		auto it = realWorld.getAtoms().find(requirement.first);
+		if (it == realWorld.getAtoms().end() || it->second != requirement.second)
+			mismatches++;
 	}
+	h = mismatches;
 }
 
 void GOAPNode::setG(GOAPNode p)
