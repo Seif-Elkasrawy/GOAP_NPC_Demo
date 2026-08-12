@@ -56,8 +56,10 @@ private:
 
 	GOAPPlanner* planner;
 
+	UPROPERTY()
 	TArray<UGOAPAction*> auxActions;
 
+	UPROPERTY()
 	TArray<UGOAPAction*> plan;
 
 	GOAPWorldState wsCurrentWorld;
