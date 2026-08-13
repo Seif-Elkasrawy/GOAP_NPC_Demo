@@ -79,6 +79,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = GOAPAction)
 		TArray<AActor*> getTargetsList(APawn* p);
 
+	// Finds the nearest actor of targetsType to p, excluding p itself,
+	// and sets it as this action's target. Returns false if none found.
+	UFUNCTION(BlueprintCallable, Category = GOAPAction)
+		bool findClosestTarget(APawn* p);
+
 	// Optional function to check if it's possible to perform the action.
 	UFUNCTION(BlueprintImplementableEvent, Category = GOAPAction)
 		bool checkProceduralPrecondition(APawn* p);

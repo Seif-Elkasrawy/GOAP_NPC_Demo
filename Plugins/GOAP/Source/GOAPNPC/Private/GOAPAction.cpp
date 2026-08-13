@@ -32,6 +32,33 @@ TArray<AActor*> UGOAPAction::getTargetsList(APawn* p)
 	return actorsFound;
 }
 
+bool UGOAPAction::findClosestTarget(APawn* p)
+{
+	TArray<AActor*> candidates = getTargetsList(p);
+
+	AActor* best = nullptr;
+	float bestDistSq = TNumericLimits<float>::Max();
+
+	for (AActor* candidate : candidates)
+	{
+		if (candidate == nullptr || candidate == p)
+			continue; // skip invalid entries and exclude self
+
+		float distSq = FVector::DistSquared(p->GetActorLocation(), candidate->GetActorLocation());
+		if (distSq < bestDistSq)
+		{
+			bestDistSq = distSq;
+			best = candidate;
+		}
+	}
+
+	if (best == nullptr)
+		return false;
+
+	setTarget(best);
+	return true;
+}
+
 bool UGOAPAction::operator==(UGOAPAction& a)
 {
 	return this->cost == a.getCost() && target == a.getTarget() && wsPreconditions == a.getPreconditions() && wsEffects == a.getEffects();
