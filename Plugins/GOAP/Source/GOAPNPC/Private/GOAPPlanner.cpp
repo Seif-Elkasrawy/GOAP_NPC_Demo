@@ -11,45 +11,34 @@ GOAPPlanner::GOAPPlanner() {}
 
 GOAPPlanner::~GOAPPlanner() {}
 
+static FString MakeEffectKey(const FString& name, bool value)
+{
+	return name + (value ? TEXT("_T") : TEXT("_F"));
+}
+
+void GOAPPlanner::indexAction(UGOAPAction* action)
+{
+	GOAPWorldState effects = action->getEffects();
+	for (auto& effectAtom : effects.getAtoms())
+	{
+		effectIndex.FindOrAdd(MakeEffectKey(effectAtom.first, effectAtom.second)).AddUnique(action);
+	}
+}
+
 GOAPPlanner::GOAPPlanner(GOAPWorldState* c, GOAPWorldState* g, const TArray<UGOAPAction*>& a)
 {
 	currentWorld = c;
 	goal = g;
 	actions = a;
-}
 
-GOAPNode GOAPPlanner::lowestFinList(const TArray<GOAPNode>& opList)
-{
-	GOAPNode node;
-
-	float minF = MAX_FLT;
-	for (GOAPNode n : opList)
+	effectIndex.Empty();
+	for (UGOAPAction* action : actions)
 	{
-		if ((n.getF()) < minF)
-		{
-			node = n;
-			minF = n.getF();
-		}
+		indexAction(action);
 	}
-
-	return node;
 }
-//
-//bool containsNode(GOAPNode node, const TArray<GOAPNode>& list)
-//{
-//	bool contains = false;
-//	for (GOAPNode n : list)
-//	{
-//		if (n == node)
-//		{
-//			contains = true;
-//			break;
-//		}
-//	}
-//	return contains;
-//}
 
-int GOAPPlanner::getIndexInOpenList(GOAPNode node, const TArray<GOAPNode>& list)
+int GOAPPlanner::getIndexInList(GOAPNode node, const TArray<GOAPNode>& list)
 {
 	for (int i = 0; i < list.Num(); ++i)
 	{
@@ -59,42 +48,54 @@ int GOAPPlanner::getIndexInOpenList(GOAPNode node, const TArray<GOAPNode>& list)
 	return -1;
 }
 
-TArray<GOAPNode> GOAPPlanner::getAdjacent(GOAPNode current, const TArray<UGOAPAction*>& vActions, APawn* p)
+TArray<GOAPNode> GOAPPlanner::getAdjacent(GOAPNode current, APawn* p)
 {
 	TArray<GOAPNode> adjacentNodes;
 	SubgoalState currentSubgoal = current.getSubgoalState();
 
-	for (int i = 0; i < vActions.Num(); ++i)
+	// Only actions whose effects can satisfy at least one atom this
+	// subgoal still needs are candidates - looked up via the precomputed
+	// index instead of scanning every registered action.
+	TArray<UGOAPAction*> candidates;
+	for (auto& requirement : currentSubgoal.getAtoms())
 	{
-		UGOAPAction* action = vActions[i];
+		if (const TArray<UGOAPAction*>* found = effectIndex.Find(MakeEffectKey(requirement.first, requirement.second)))
+		{
+			for (UGOAPAction* action : *found)
+			{
+				candidates.AddUnique(action);
+			}
+		}
+	}
+	for (UGOAPAction* action : candidates)
+	{
 
 		// Checks if the action is the same as the current one. (This can be deleted if you want your AI to perform the same action consecutively).
 		const bool bSameActionAsBefore = current.getAction() == action;
 		if (bSameActionAsBefore)
 			continue;
+
 		// Checks the procedural precondition of the action.
 		const bool bProceduralPreconditionFulfilled = action->checkProceduralPrecondition(p);
 		if (!bProceduralPreconditionFulfilled)
 			continue;
 
 		SubgoalState newSubgoal = currentSubgoal;
-		bool resolvedSomething = false;
 
-		// Single pass: match action's effects against subgoal atoms,
-		// subtract on match, and track whether this action qualifies at all.
+		// Membership in `candidates` already guarantees this action
+		// resolves at least one atom, so there's no separate
+		// "resolvedSomething" check needed here anymore - the index
+		// enforces that invariant by construction.
 		GOAPWorldState effects = action->getEffects();
-		for (auto requirement : currentSubgoal.getAtoms()) 
+		for (auto requirement : currentSubgoal.getAtoms())
 		{
 			auto effectAtoms = effects.getAtoms();
 			auto it = effectAtoms.find(requirement.first);
 			if (it != effectAtoms.end() && it->second == requirement.second)
 			{
 				newSubgoal.removeAtom(requirement.first);
-				resolvedSomething = true;
 			}
 		}
-		if (!resolvedSomething)
-			continue; // doesn't resolve anything we still need
 
 		newSubgoal.mergeUnsatisfiedRequirements(action->getPreconditions(), *currentWorld);
 
@@ -111,6 +112,11 @@ TArray<UGOAPAction*> GOAPPlanner::generatePlan(APawn* p)
 {
 	TArray<UGOAPAction*> sol;
 
+	// Min-heap by F score. Takes nodes by value (not const&) because
+	// GOAPNode's getters aren't const-qualified - same workaround the
+	// old lowestFinList used by iterating "GOAPNode n : opList" by value.
+	auto FComparator = [](GOAPNode A, GOAPNode B) { return A.getF() < B.getF(); };
+
 	GOAPNode start;
 	start.setSubgoalState(SubgoalState(*goal)); // goal seeds the root
 	start.setParent(-1);
@@ -118,7 +124,7 @@ TArray<UGOAPAction*> GOAPPlanner::generatePlan(APawn* p)
 	GOAPNode last;
 	openList.Empty();
 	closedList.Empty();
-	openList.Push(start);
+	openList.HeapPush(start, FComparator);
 
 	bool continues = true;
 	bool goalReached = false;
@@ -126,8 +132,18 @@ TArray<UGOAPAction*> GOAPPlanner::generatePlan(APawn* p)
 	// Search and create the cheapest path between actions having into account their preconditions, effects and cost.
 	while (continues)
 	{
-		GOAPNode current = lowestFinList(openList);
-		openList.Remove(current);
+		GOAPNode current;
+		openList.HeapPop(current, FComparator);
+
+		// Lazy deletion: the heap always pops the lowest-F entry first,
+		// so the first time a given (action, subgoalState) is popped it
+		// is guaranteed to be its cheapest instance. A later, more
+		// expensive duplicate of the same node may still be sitting in
+		// the heap from before a cheaper path superseded it - skip it
+		// rather than expanding it a second time.
+		if (getIndexInList(current, closedList) != -1)
+			continue;
+
 		closedList.Push(current);
 		int pos = closedList.Num() - 1;
 
@@ -156,28 +172,15 @@ TArray<UGOAPAction*> GOAPPlanner::generatePlan(APawn* p)
 		}
 
 		// Get adjacents of actual node.
-		TArray<GOAPNode> adjacents = getAdjacent(current, actions, p);
+		TArray<GOAPNode> adjacents = getAdjacent(current, p);
 
 		// Explore adjacent nodes.
 		for (GOAPNode& adjacent : adjacents)
 		{
 			adjacent.setG(current);
-
-			int existingIndex = getIndexInOpenList(adjacent, openList);
-
-			// If the adjacent node isn't in the open list, it is added.
-			if (existingIndex == -1)
-			{
-				adjacent.setParent(pos);
-				adjacent.setH(*currentWorld);
-				openList.Push(adjacent);
-			}
-			// If current path to adjacent node is cheaper than the previous one, the path changes. 
-			else if (adjacent.getG() < openList[existingIndex].getG())
-			{
-				openList[existingIndex].setParent(pos);
-				openList[existingIndex].setG(current);
-			}
+			adjacent.setParent(pos);
+			adjacent.setH(*currentWorld);
+			openList.HeapPush(adjacent, FComparator);
 		}
 
 		// If open list is empty or the algorithm reach the maximum depth, the plan stops.
@@ -212,6 +215,7 @@ TArray<UGOAPAction*> GOAPPlanner::generatePlan(APawn* p)
 void GOAPPlanner::addAction(UGOAPAction* a)
 {
 	this->actions.Push(a);
+	indexAction(a);
 }
 
 GOAPWorldState GOAPPlanner::getGoal()
