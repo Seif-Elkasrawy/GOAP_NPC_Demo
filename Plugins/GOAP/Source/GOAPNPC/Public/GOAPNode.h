@@ -20,7 +20,7 @@ private:
 
 	SubgoalState subgoalState;
 
-	int h;
+	float h;
 
 	float g;
 
@@ -39,7 +39,7 @@ public:
 
 	// GETS
 
-	int getH();
+	float getH();
 
 	float getG();
 
@@ -53,9 +53,9 @@ public:
 
 	// SETS
 
-	void setH(int value);
+	void setH(float value);
 
-	void setH(GOAPWorldState w);
+	// void setH(GOAPWorldState w);
 
 	void setG(GOAPNode p);
 

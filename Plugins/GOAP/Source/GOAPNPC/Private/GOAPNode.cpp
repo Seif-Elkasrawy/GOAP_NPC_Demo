@@ -33,7 +33,7 @@ SubgoalState GOAPNode::getSubgoalState()
 	return subgoalState;
 }
 
-int GOAPNode::getH()
+float GOAPNode::getH()
 {
 	return h;
 }
@@ -63,22 +63,22 @@ void GOAPNode::setSubgoalState(SubgoalState s)
 	this->subgoalState = s;
 }
 
-void GOAPNode::setH(int value)
+void GOAPNode::setH(float value)
 {
 	this->h = value;
 }
 
-void GOAPNode::setH(GOAPWorldState realWorld)
-{
-	int mismatches = 0;
-	for (auto requirement : subgoalState.getAtoms())
-	{
-		auto it = realWorld.getAtoms().find(requirement.first);
-		if (it == realWorld.getAtoms().end() || it->second != requirement.second)
-			mismatches++;
-	}
-	h = mismatches;
-}
+// void GOAPNode::setH(GOAPWorldState realWorld)
+// {
+// 	int mismatches = 0;
+// 	for (auto requirement : subgoalState.getAtoms())
+// 	{
+// 		auto it = realWorld.getAtoms().find(requirement.first);
+// 		if (it == realWorld.getAtoms().end() || it->second != requirement.second)
+// 			mismatches++;
+// 	}
+// 	h = mismatches;
+// }
 
 void GOAPNode::setG(GOAPNode p)
 {
