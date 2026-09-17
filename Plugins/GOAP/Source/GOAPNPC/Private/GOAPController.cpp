@@ -7,8 +7,6 @@
  */
 #include "GOAPController.h"
 
-#define BToS(b) b ? TEXT("true") : TEXT("false")
-
 static TAutoConsoleVariable<bool> CVarGOAPLogStats(
 	TEXT("GOAP.LogStats"),
 	false,
@@ -17,6 +15,12 @@ static TAutoConsoleVariable<bool> CVarGOAPLogStats(
 );
 
 AGOAPController::AGOAPController() {}
+
+AGOAPController::~AGOAPController()
+{
+	delete planner;
+	planner = nullptr;
+}
 
 void AGOAPController::BeginPlay()
 {

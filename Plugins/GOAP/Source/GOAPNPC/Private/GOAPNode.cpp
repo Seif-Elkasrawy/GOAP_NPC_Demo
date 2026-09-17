@@ -68,18 +68,6 @@ void GOAPNode::setH(float value)
 	this->h = value;
 }
 
-// void GOAPNode::setH(GOAPWorldState realWorld)
-// {
-// 	int mismatches = 0;
-// 	for (auto requirement : subgoalState.getAtoms())
-// 	{
-// 		auto it = realWorld.getAtoms().find(requirement.first);
-// 		if (it == realWorld.getAtoms().end() || it->second != requirement.second)
-// 			mismatches++;
-// 	}
-// 	h = mismatches;
-// }
-
 void GOAPNode::setG(GOAPNode p)
 {
 	this->g += p.getG();
@@ -88,11 +76,4 @@ void GOAPNode::setG(GOAPNode p)
 void GOAPNode::setParent(int p)
 {
 	this->parent = p;
-}
-
-void GOAPNode::setAction(UGOAPAction* a)
-{
-	this->h = 0;
-	this->g = a->getCost();
-	this->action = a;
 }
