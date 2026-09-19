@@ -29,6 +29,8 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	AGOAPSquadCoordinator();
+
 private:
 
 	/**

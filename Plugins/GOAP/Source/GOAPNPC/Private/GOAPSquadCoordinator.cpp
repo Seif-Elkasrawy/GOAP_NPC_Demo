@@ -1,6 +1,18 @@
 #include "GOAPSquadCoordinator.h"
 #include "GOAPController.h"
 
+AGOAPSquadCoordinator::AGOAPSquadCoordinator()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AGOAPSquadCoordinator::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	AssignTasks();
+	CheckTaskCompletion();
+}
+
 void AGOAPSquadCoordinator::AssignTasks()
 {
 	// Highest priority first.
@@ -10,7 +22,7 @@ void AGOAPSquadCoordinator::AssignTasks()
 		if (task.status == ESquadTaskStatus::Unassigned)
 			unclaimed.Add(&task);
 	}
-	unclaimed.Sort([](const FSquadTask* A, const FSquadTask* B) { return A->priority > B->priority; });
+	unclaimed.Sort([](const FSquadTask& A, const FSquadTask& B) { return A.priority > B.priority; });
 
 	for (FSquadTask* task : unclaimed)
 	{
