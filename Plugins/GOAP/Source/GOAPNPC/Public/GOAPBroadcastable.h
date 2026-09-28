@@ -13,7 +13,7 @@
  *
  * The plugin only ever knows about this interface. It has no concept of
  * doors or any other concrete object; that belongs entirely to whatever
- * game-specific class implements it (see e.g. Source/TFG/GOAPKeyDoor for
+ * game-specific class implements it (see e.g. Source/MestersDemo/GOAPKeyDoor for
  * this demo project's door). This is what keeps the coordinator reusable
  * across different games without a Broadcast<Thing>State function per object type.
  */

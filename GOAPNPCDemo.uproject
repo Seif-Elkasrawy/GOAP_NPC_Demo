@@ -7,14 +7,14 @@
 		{
 			"Name": "TFG",
 			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "MastersDemo",
+			"Type": "Runtime",
 			"LoadingPhase": "Default",
-			"WhitelistPlatforms": [
-				"Win64",
-				"Android"
-			],
 			"AdditionalDependencies": [
-				"AIModule",
-				"CoreUObject"
+				"Engine"
 			]
 		}
 	],
