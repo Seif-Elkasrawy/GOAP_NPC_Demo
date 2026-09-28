@@ -2,6 +2,7 @@
 
 #include "TFGGameMode.h"
 #include "TFGCharacter.h"
+#include "GOAP_NPCPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 ATFGGameMode::ATFGGameMode()
@@ -12,4 +13,7 @@ ATFGGameMode::ATFGGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	PlayerControllerClass = AGOAP_NPCPlayerController::StaticClass();
+
 }
