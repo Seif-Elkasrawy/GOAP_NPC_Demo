@@ -16,14 +16,14 @@ GOAPWorldState::GOAPWorldState(const std::map<FString, bool>& a)
 	atoms = a;
 }
 
-bool GOAPWorldState::operator==(GOAPWorldState  w)
+bool GOAPWorldState::operator==(const GOAPWorldState& w) const
 {
 	return atoms.size() == w.getAtoms().size() && std::equal(atoms.begin(), atoms.end(), w.getAtoms().begin());
 }
 
-bool GOAPWorldState::isIncluded(GOAPWorldState w)
+bool GOAPWorldState::isIncluded(const GOAPWorldState& w) const
 {
-	for (auto requirement : w.getAtoms())
+	for (const auto& requirement : w.getAtoms())
 	{
 		auto it = atoms.find(requirement.first);
 		if (it != atoms.end())
@@ -37,7 +37,7 @@ bool GOAPWorldState::isIncluded(GOAPWorldState w)
 
 }
 
-const std::map<FString, bool>& GOAPWorldState::getAtoms()
+const std::map<FString, bool>& GOAPWorldState::getAtoms() const
 {
 	return atoms;
 }
@@ -57,15 +57,15 @@ void GOAPWorldState::cleanAtoms()
 	atoms.clear();
 }
 
-void GOAPWorldState::joinWorldState(GOAPWorldState w)
+void GOAPWorldState::joinWorldState(const GOAPWorldState& w)
 {
-	for (auto atom : w.getAtoms())
+	for (const auto& atom : w.getAtoms())
 	{
 		atoms[atom.first] = atom.second;
 	}
 }
 
-bool GOAPWorldState::isEmpty()
+bool GOAPWorldState::isEmpty() const
 {
 	return atoms.size() == 0;
 }
