@@ -174,6 +174,9 @@ public:
 	/** @return The number of nodes genuinely expanded during the most recent generatePlan() call. */
 	int getLastExpansionCount();
 
+	/** @return True if the most recent generatePlan() call found no plan (as opposed to finding an empty plan because the goal was already satisfied). */
+	bool didLastPlanFail() const;
+
 	//SETS
 
 	/**
