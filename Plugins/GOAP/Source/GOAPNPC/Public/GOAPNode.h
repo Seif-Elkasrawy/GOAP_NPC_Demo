@@ -11,12 +11,12 @@
 #include "SubgoalState.h"
 #include "CoreMinimal.h"
 
- /**
-  * A single node in the A* search graph the planner explores. Represents a
-  * possible state of the world, reached via a chosen action, together with
-  * the subgoal that still needs to be satisfied from this point and the
-  * costs (g, h, f) A* uses to order and evaluate the open list.
-  */
+/**
+ * A single node in the A* search graph the planner explores. Represents a
+ * possible state of the world, reached via a chosen action, together with
+ * the subgoal that still needs to be satisfied from this point and the
+ * costs (g, h, f) A* uses to order and evaluate the open list.
+ */
 class GOAPNPC_API GOAPNode
 {
 private:
@@ -45,6 +45,18 @@ public:
 	 * @param a The action chosen to reach this node.
 	 */
 	GOAPNode(UGOAPAction* a);
+
+		/**
+	 * Constructs a node reached via the given action with an explicit own
+	 * cost, instead of the action's base cost. Lets the planner fold
+	 * per-agent adjustments (e.g. failure penalties) into g without this
+	 * node knowing where they come from. The existing single-argument
+	 * constructor delegates here with the action's base cost.
+	 *
+	 * @param a The action chosen to reach this node.
+	 * @param cost This node's own cost, accumulated with the parent's g later via setG.
+	 */
+	GOAPNode(UGOAPAction* a, float cost);
 
 	//OPERATORS 
 

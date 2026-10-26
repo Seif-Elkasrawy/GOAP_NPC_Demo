@@ -1,4 +1,4 @@
-﻿/**
+/**
 	GOAP NPC: Goal-Oriented Action Planning for Non-Player Characters
 	Copyright � 2022 Narratech Laboratories
 
@@ -10,13 +10,13 @@
 #include <map>
 #include "CoreMinimal.h"
 
- /**
-  * The state of the world (the "logic world" GOAP reasons over) is made up of atoms.
-  * An atom is a predicate (a simple string name) paired with a boolean truth value.
-  * GOAPWorldState exists to give the planner, actions, and world-state comparisons
-  * (satisfaction checks, effect application) a single, uniform representation to
-  * operate on, independent of how any individual atom is produced or consumed.
-  */
+/**
+ * The state of the world (the "logic world" GOAP reasons over) is made up of atoms.
+ * An atom is a predicate (a simple string name) paired with a boolean truth value.
+ * GOAPWorldState exists to give the planner, actions, and world-state comparisons
+ * (satisfaction checks, effect application) a single, uniform representation to
+ * operate on, independent of how any individual atom is produced or consumed.
+ */
 class GOAPNPC_API GOAPWorldState
 {
 private:

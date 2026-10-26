@@ -16,6 +16,14 @@ public:
 	// Sets default values for this actor's properties
 	AGOAPKeyDoor();
 
+	/**
+	 * When true, actions that try to open this door normally (e.g. OpenDoor)
+	 * should return Failed. Not broadcast to agents on purpose: they believe
+	 * the door is openable until they try.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = KeyDoor)
+	bool bJammed = false;
+
 	/** True once a key has been placed at this door's first location. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = KeyDoor)
 	bool socketAFilled = false;

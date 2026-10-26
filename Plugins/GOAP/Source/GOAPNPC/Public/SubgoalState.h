@@ -9,16 +9,16 @@
 #include "GOAPWorldState.h"
 
 
- /**
-  * Holds the set of atoms that must still become true for a plan to be valid,
-  * as regressed backward from the goal during backward-chaining search.
-  * Unlike GOAPWorldState (a fixed set of facts - an action's preconditions/
-  * effects, or the agent's real current world), a SubgoalState is expected to
-  * shrink as actions are found that satisfy its atoms, and grow as those
-  * actions' own preconditions are folded in. Composes a GOAPWorldState
-  * internally to reuse its atom storage and comparison logic rather than
-  * reimplementing it.
-  */
+/**
+ * Holds the set of atoms that must still become true for a plan to be valid,
+ * as regressed backward from the goal during backward-chaining search.
+ * Unlike GOAPWorldState (a fixed set of facts - an action's preconditions/
+ * effects, or the agent's real current world), a SubgoalState is expected to
+ * shrink as actions are found that satisfy its atoms, and grow as those
+ * actions' own preconditions are folded in. Composes a GOAPWorldState
+ * internally to reuse its atom storage and comparison logic rather than
+ * reimplementing it.
+ */
 class GOAPNPC_API SubgoalState
 {
 private:
