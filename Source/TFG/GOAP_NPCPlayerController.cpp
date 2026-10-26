@@ -3,6 +3,7 @@
 
 #include "GOAP_NPCPlayerController.h"
 #include "GOAPController.h"
+#include "GOAPKeyDoor.h"
 #include "Kismet/GameplayStatics.h"
 
 void AGOAP_NPCPlayerController::DestroyPawnByName(FString ActorName, bool bDestroyControllerToo)
@@ -31,4 +32,23 @@ void AGOAP_NPCPlayerController::DestroyPawnByName(FString ActorName, bool bDestr
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("DestroyPawnByName: no pawn found matching '%s'"), *ActorName);
+}
+
+void AGOAP_NPCPlayerController::SetDoorJammed(FString DoorName, bool bJammed)
+{
+	TArray<AActor*> Doors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGOAPKeyDoor::StaticClass(), Doors);
+
+	for (AActor* Actor : Doors)
+	{
+		if (Actor->GetName().Contains(DoorName))
+		{
+			Cast<AGOAPKeyDoor>(Actor)->bJammed = bJammed;
+			UE_LOG(LogTemp, Warning, TEXT("SetDoorJammed: %s jammed = %s"),
+				*Actor->GetName(), bJammed ? TEXT("true") : TEXT("false"));
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("SetDoorJammed: no door found matching '%s'"), *DoorName);
 }

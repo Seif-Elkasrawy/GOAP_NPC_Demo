@@ -18,4 +18,8 @@ public:
 
 	UFUNCTION(Exec)
 	void DestroyPawnByName(FString ActorName, bool bDestroyControllerToo = false);
+
+	/** Debug exec: jams or unjams the first door whose name contains DoorName. */
+	UFUNCTION(Exec)
+	void SetDoorJammed(FString DoorName, bool bJammed);
 };
