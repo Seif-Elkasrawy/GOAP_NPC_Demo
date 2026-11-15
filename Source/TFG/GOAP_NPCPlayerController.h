@@ -16,6 +16,13 @@ class TFG_API AGOAP_NPCPlayerController : public APlayerController
 	
 public:
 
+	virtual void SetupInputComponent() override;
+
+	void KillNearestAgent();
+	void JamNearestDoor();
+	void CycleDebugDraw();
+	void ReloadLevel();
+
 	UFUNCTION(Exec)
 	void DestroyPawnByName(FString ActorName, bool bDestroyControllerToo = false);
 
