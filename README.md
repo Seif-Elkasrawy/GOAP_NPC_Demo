@@ -30,7 +30,29 @@ Thank you very much!
   2. Wait for the .sln file to be generated and run it.
   3. While everything is loading in Visual Studio, you can open the project in Unreal or launch from VS.
 
-## Demo hotkeys
-  Change AI goal:
-  - { Z } Get Coin.
-  - { X } Follow Character.
+## Controls and debugging (thesis fork)
+
+Added for the cooperative multi-agent showcase. The keys work in Play In Editor.
+
+| Key | Action |
+|---|---|
+| K | Destroy the GOAP agent nearest to the player (pawn and controller). The squad coordinator reassigns its task. |
+| J | Jam or unjam the key door nearest to the player. Agents are not told: they find out when `OpenDoor` fails. |
+| G | Cycle debug drawing: off, compact, full. |
+| H | Reload the current level (resets the scenario). |
+| P | Add a test task with priority 20 to the squad coordinator at runtime. With preemption enabled it takes an agent from a lower-priority task. |
+| C | Reset the goal of the failure-test agent (failure-test level only). |
+| Z / X | Original demo hotkeys: set the goal to Get Coin / Follow Character (single-agent demo). |
+
+Console commands (type in the console with `~`):
+
+- `DestroyPawnByName <name> [true]` destroys the first pawn whose name contains the text. The optional flag also destroys its controller.
+- `SetDoorJammed <door name> <true|false>` jams or unjams a key door by name.
+
+### Console variables
+
+| Variable | Default | Effect |
+|---|---|---|
+| `GOAP.DebugDraw` | 0 | 0 off. 1 status label above each agent and a marker at each squad task. 2 adds current action and step, failure count, goal and a line to the target. |
+| `GOAP.EventDrivenReplanning` | 1 | 1 replans only on events. 0 replans on every `executeGOAP` call (baseline for comparison). |
+| `GOAP.LogSquad` | 0 | Logs coordinator events: assignment, preemption, completion, handback, failure, retry,
